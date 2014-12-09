@@ -16,7 +16,7 @@ type VocabWord struct {
 	CodeLen     int
 }
 
-var Vocab = make(map[string]VocabWord)
+var Vocab = make(map[string]*VocabWord)
 var VocabHash = make(map[string]int)
 
 func LearnVocab(fn string) {
@@ -24,9 +24,8 @@ func LearnVocab(fn string) {
 }
 
 func addWord(word string) {
-	_, ok := Vocab[word]
-	if !ok {
-		Vocab[word] = VocabWord{
+	if Vocab[word] == nil {
+		Vocab[word] = &VocabWord{
 			word,
 			1,
 			[]int{},
@@ -40,9 +39,9 @@ func addWord(word string) {
 }
 
 func hashWord(word string) uint {
-	var hash = 0
-	for i := 0; i < len(word); i++ {
-		hash = hash*257 + word[i]
+	var hash uint64 = 0
+	for _, c := range word {
+		hash = hash*257 + uint64(c)
 	}
 	return hash % VocabHashSize
 }
